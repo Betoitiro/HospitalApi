@@ -1,0 +1,3 @@
+[submodule "APIHospital"]
+	path = APIHospital
+	url = https://github.com/Betoitiro/HospitalApi
