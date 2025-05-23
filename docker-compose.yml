@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: hospital_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: hospitaldb
+      POSTGRES_USER: hospital
+      POSTGRES_PASSWORD: secret123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  api:
+    build:
+      context: ./API
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/hospitaldb
+      SPRING_DATASOURCE_USERNAME: hospital
+      SPRING_DATASOURCE_PASSWORD: secret123
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./Frontend/frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - app-network
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge
